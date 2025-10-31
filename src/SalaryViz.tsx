@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js';
-import { Show } from 'solid-js';
+import { Show, createSignal, onMount } from 'solid-js';
 import styles from './App.module.scss';
 
 type Props = {
@@ -20,6 +20,13 @@ const App: Component<Props> = (props) => {
 	const perMinute = () => perHour() / 60
 	const perSecond = () => perMinute() / 60
 	const perMillisecond = () => perSecond() / 1000;
+	const now = new Date();
+	const [salaryEarned, setSalaryEarned] = createSignal(0);
+	onMount(() => {
+		setInterval(() => {
+			setSalaryEarned(prev => prev + perMillisecond());
+		}, 1)
+	})
 	return <>
 		<p>Salary per Year = {toCurrency(props.salary)}</p>
 		<p>Salary per Month = {toCurrency(perMonth())}</p>
@@ -28,6 +35,9 @@ const App: Component<Props> = (props) => {
 		<p>Salary per Hour = {toCurrency(perHour())}</p>
 		<p>Salary per Minute = {toCurrency(perMinute())}</p>
 		<p>Salary per Second = {toCurrency(perSecond())}</p>
+		<br />
+		<p>Salary earned since {now.toLocaleString()}:</p>
+		<p>{toCurrency(salaryEarned())}</p>
 	</>;
 };
 
